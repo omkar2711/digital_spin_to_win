@@ -1,0 +1,223 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 264 71% 58%; /* upGrad purple */
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 171 97% 42%; /* upGrad teal */
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 264 71% 58%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    --spin-degree: 0deg;
+    
+    /* upGrad brand colors */
+    --upgrad-red: 5 75% 57%;
+    --upgrad-purple: 264 71% 58%;
+    --upgrad-teal: 171 97% 42%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-upgrad-purple to-upgrad-teal bg-clip-text text-transparent;
+  }
+}
+
+.wheel-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 1/1;
+  margin: 0 auto;
+  margin-top: 100px;
+  margin-bottom: 300px;
+}
+
+.wheel {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.wheel-segment {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  transform-origin: bottom right;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+  overflow: hidden;
+  text-shadow: 0px 0px 1px rgba(255, 255, 255, 0.7);
+}
+
+.wheel-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.wheel-arrow {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 30px;
+  z-index: 10;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
+}
+
+.spin-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background-color: #E23744;
+  color: white;
+  font-weight: bold;
+  border: 4px solid white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  z-index: 30;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.spin-btn:hover {
+  background-color: #d12c39;
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+.spin-btn:active {
+  transform: translate(-50%, -50%) scale(0.95);
+}
+
+.spinning {
+  pointer-events: none;
+}
+
+.winning-animation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 20;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Animation for spinning the wheel */
+@keyframes spin-wheel {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(var(--spin-degree)); }
+}
+
+.animate-spin-wheel {
+  animation: spin-wheel 5s cubic-bezier(0.1, 0.05, 0.15, 1) forwards;
+}
+
+/* Update upgrad colors in tailwind config */
+.bg-upgrad-red {
+  background-color: #E23744;
+}
+
+.text-upgrad-red {
+  color: #E23744;
+}
+
+/* Additional classes for wheel appearance */
+.wheel-text {
+  font-size: 0.65rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  transform-origin: center;
+  white-space: nowrap;
+}
+
+/* New styling for the wheel base to match the image */
+.wheel-base {
+  position: relative;
+  clip-path: polygon(0% 0%, 100% 0%, 85% 100%, 15% 100%);
+  padding-bottom: 120px;
+}
+
+/* Styling for the top arc */
+.wheel-container h2 {
+  text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+  letter-spacing: 0.1em;
+}
