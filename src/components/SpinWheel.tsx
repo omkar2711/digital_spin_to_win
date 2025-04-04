@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import wheelImage from '../assets/wheel-image.png';
-import backgroundImage from '../assets/Spinning Wheel Final v3-1 (1).png';
+import backgroundImage from '../assets/background-image.png';
 
 interface SpinWheelProps {
   onPrizeWon: (prize: string) => void;
@@ -203,7 +203,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ onPrizeWon, userData }) => {
         />
         
         {/* Spinning Wheel */}
-        <div className="absolute top-[15%] sm:top-[18%] md:top-[22%] left-1/2 transform -translate-x-1/2 w-[52%] sm:w-[60%] md:w-[52%] aspect-square -mt-2 sm:-mt-16 md:-mt-28">
+        <div className="absolute top-[15%] sm:top-[18%] md:top-[22%] left-1/2 transform -translate-x-1/2 w-[52%] sm:w-[60%] md:w-[52%] aspect-square -mt-4 sm:-mt-16 md:-mt-32">
           <img 
             ref={wheelRef}
             src={wheelImage}
