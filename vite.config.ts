@@ -21,10 +21,11 @@ export default defineConfig(({ mode }) => ({
   },
   base: './',
   build: {
+    outDir: 'dist',
     rollupOptions: {
       output: {
-        manualChunks: undefined,
-      },
-    },
+        manualChunks: undefined
+      }
+    }
   },
 }));
