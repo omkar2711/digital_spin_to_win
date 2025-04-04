@@ -1,26 +1,14 @@
-# Welcome to your Lovable project
+# Digital Spin to Win
 
-## Project info
+## Project Overview
 
-**URL**: https://lovable.dev/projects/89e45242-e10c-4ead-8e01-653575d04278
+**Digital Spin to Win** is an interactive web-based game designed to engage users by allowing them to spin a wheel and win exciting prizes. The game ensures a fun and engaging experience while also collecting user information for future interactions.
 
-## How can I edit this code?
+## How to Edit the Code
 
-There are several ways of editing your application.
+### Using Your Preferred IDE
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/89e45242-e10c-4ead-8e01-653575d04278) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+If you want to work locally using your own IDE, follow these steps:
 
 ```sh
 # Step 1: Clone the repository using the project's Git URL.
@@ -36,13 +24,13 @@ npm i
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Editing Files Directly on GitHub
 
 - Navigate to the desired file(s).
 - Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- Make your changes and commit them.
 
-**Use GitHub Codespaces**
+### Using GitHub Codespaces
 
 - Navigate to the main page of your repository.
 - Click on the "Code" button (green button) near the top right.
@@ -50,7 +38,7 @@ npm run dev
 - Click on "New codespace" to launch a new Codespace environment.
 - Edit files directly within the Codespace and commit and push your changes once you're done.
 
-## What technologies are used for this project?
+## Technologies Used
 
 This project is built with:
 
@@ -60,14 +48,11 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-## How can I deploy this project?
+## Deployment
 
-Simply open [Lovable](https://lovable.dev/projects/89e45242-e10c-4ead-8e01-653575d04278) and click on Share -> Publish.
+To deploy the project, use any preferred hosting service such as Vercel, Netlify, or GitHub Pages.
 
-## Can I connect a custom domain to my Lovable project?
+## Custom Domain Setup
 
-Yes it is!
+If you want to connect a custom domain, follow the hosting service's domain setup instructions to link your domain to the deployed project.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
