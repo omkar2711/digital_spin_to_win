@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useUser } from '../contexts/UserContext';
 import { Button } from "@/components/ui/button";
@@ -54,7 +53,7 @@ const WinningModal: React.FC<WinningModalProps> = ({ prize, isOpen, onClose }) =
           
           {!isBetterLuck && (
             <div className="text-sm text-gray-400 mt-2">
-              <p>We'll contact you at {userData?.email || 'your email'} with details on how to claim your prize.</p>
+              <p>Please reach-out to the upGrad POC or visit your nearest upGrad store to claim the reward!</p>
             </div>
           )}
         </CardContent>
@@ -69,7 +68,7 @@ const WinningModal: React.FC<WinningModalProps> = ({ prize, isOpen, onClose }) =
           </Button> */}
           
             <Button 
-              onClick={() => window.location.href = 'https://www.upgrad.com'} 
+              onClick={() => window.location.href = 'https://www.upgrad.com/offline-centres/'} 
               className="bg-[#E23744] hover:bg-[#E23744]/90"
             >
               Explore upGrad
