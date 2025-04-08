@@ -1,10 +1,11 @@
-
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
 export interface UserData {
   name: string;
   email: string;
   phone: string;
+  city: string;
+  store: string;
 }
 
 interface UserContextType {

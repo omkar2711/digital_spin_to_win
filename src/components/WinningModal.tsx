@@ -108,11 +108,27 @@ const WinningModal: React.FC<WinningModalProps> = ({ prize, isOpen, onClose }) =
       prizeField.value = prize || '';
       form.appendChild(prizeField);
       
+      // Add new city field
+      const cityField = document.createElement('input');
+      cityField.type = 'hidden';
+      cityField.name = 'entry.872670545';
+      cityField.value = userData?.city || '';
+      form.appendChild(cityField);
+      
+      // Add new store field
+      const storeField = document.createElement('input');
+      storeField.type = 'hidden';
+      storeField.name = 'entry.1084051875';
+      storeField.value = userData?.store || '';
+      form.appendChild(storeField);
+      
       console.log('Form data prepared for submission:', {
         name: userData?.name || '',
         phone: userData.phone,
         email: userData?.email || '',
-        prize: prize || ''
+        prize: prize || '',
+        city: userData?.city || '',
+        store: userData?.store || ''
       });
       
       // Add form to body and submit

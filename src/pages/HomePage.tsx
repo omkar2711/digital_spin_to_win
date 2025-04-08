@@ -7,7 +7,20 @@ interface FormData {
   fullName: string;
   contact: string;
   email: string;
+  city: string;
+  store: string;
 }
+
+// Store data
+const CITY_STORE_DATA = {
+  "Delhi": ["NSP Store"],
+  "Mumbai": ["Vashi", "Kalyan", "Marol", "Andheri East", "Andheri West", "Thane", "Linking Rd, Bandra", 
+             "Borivali", "Chembur", "Powai", "Lower Parel", "Ghatkopar West"],
+  "Hyderabad": ["Somajiguda", "SR Nagar", "Himayat Nagar", "Begumpet", "Kukatpally", 
+               "Chaitanyapuri", "LB Nagar", "Kondapur", "Hitech City"],
+  "Bengaluru": ["Kasturi Nagar", "BTM Layout", "Malleshwaram", "Marathahalli", 
+               "Coles Road", "Comm Street", "Rajaji Nagar"]
+};
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -16,15 +29,31 @@ const HomePage = () => {
     fullName: '',
     contact: '',
     email: '',
+    city: '',
+    store: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [availableStores, setAvailableStores] = useState<string[]>([]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    
+    // If city is changing, reset store and update available stores
+    if (name === 'city') {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value,
+        store: '' // Reset store when city changes
+      }));
+      
+      // Update available stores based on selected city
+      setAvailableStores(CITY_STORE_DATA[value as keyof typeof CITY_STORE_DATA] || []);
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const checkPhoneNumberExists = async (phone: string) => {
@@ -131,6 +160,23 @@ const HomePage = () => {
       return;
     }
 
+    // Additional validation for city and store
+    if (!formData.city) {
+      toast.error("Please select your city", {
+        duration: 5000,
+        className: "text-lg font-medium px-4 py-3"
+      });
+      return;
+    }
+
+    if (!formData.store) {
+      toast.error("Please select a store", {
+        duration: 5000,
+        className: "text-lg font-medium px-4 py-3"
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -147,11 +193,13 @@ const HomePage = () => {
         return;
       }
 
-      // Store user data in context with normalized phone number
+      // Store user data in context with normalized phone and the new fields
       setUserData({
         name: formData.fullName,
         email: formData.email,
-        phone: formData.contact.replace(/\D/g, '') // Store normalized phone
+        phone: formData.contact.replace(/\D/g, ''), // Store normalized phone
+        city: formData.city,
+        store: formData.store
       });
       
       // Navigate to the game page
@@ -248,7 +296,7 @@ const HomePage = () => {
                   </li>
                   <li className="flex items-start group">
                     <span className="text-red-600 mr-3 mt-1">•</span>
-                    <span className="group-hover:text-gray-900 transition-colors duration-200">Click the "Start Challenge" button</span>
+                    <span className="group-hover:text-gray-900 transition-colors duration-200">Click the "Spin & Win Now" button</span>
                   </li>
                   <li className="flex items-start group">
                     <span className="text-red-600 mr-3 mt-1">•</span>
@@ -332,12 +380,42 @@ const HomePage = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-red-100 focus:border-red-500"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-red-100 text-gray-700 focus:border-red-500"
                     required
                   />
                 </div>
+                
+                <div className="grid md:grid-cols-2 gap-6 mb-10">
+                  <select
+                    name="city"
+                    value={formData.city}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-red-100 focus:border-red-500 bg-white appearance-none ${formData.city ? 'text-gray-700' : 'text-gray-400'}`}
+                    required
+                  >
+                    <option value="" className="text-gray-400">Select City</option>
+                    {Object.keys(CITY_STORE_DATA).map(city => (
+                      <option key={city} value={city} className="text-gray-700">{city}</option>
+                    ))}
+                  </select>
+                  
+                  <select
+                    name="store"
+                    value={formData.store}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-red-100 focus:border-red-500 bg-white appearance-none ${formData.store ? 'text-gray-700' : 'text-gray-400'}`}
+                    disabled={!formData.city}
+                    required
+                  >
+                    <option value="" className="text-gray-400">Select Store</option>
+                    {availableStores.map(store => (
+                      <option key={store} value={store} className="text-gray-700">{store}</option>
+                    ))}
+                  </select>
+                </div>
+                
                 <div className="flex justify-center">
-                  <div className="-mt-6">
+                  <div className="">
                     <button
                       type="submit"
                       className="bg-red-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-red-700 transition-all"
