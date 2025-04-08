@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import wheelImage from '../assets/wheel-image.png';
 import backgroundImage from '../assets/background-image.png';
+import { toast } from "sonner";
+import WinningModal from './WinningModal';
 
 interface SpinWheelProps {
   onPrizeWon: (prize: string) => void;
@@ -74,6 +76,14 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ onPrizeWon, userData }) => {
 
   const submitToGoogleForm = async (prize: string) => {
     try {
+      // Check if we should skip form submission
+      if (!userData || !userData.phone) {
+        console.log('Skipping form submission - missing user data');
+        return;
+      }
+      
+      console.log('SpinWheel submitting form with phone:', userData.phone);
+      
       const formId = '1FAIpQLSc0E_Z_2n5xMD7KO0Oim-20UjHZ4hLXRZzvyMXzfzzwMYR2aQ';
       
       // Create a hidden iframe for form submission
@@ -139,12 +149,15 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ onPrizeWon, userData }) => {
     if (isSpinning) return;
     
     try {
+      console.log('Starting wheel spin with user data:', userData);
       setErrorMsg(null);
       const newRandomDegree = Math.floor(Math.random() * 360);
+      console.log('Generated random degree:', newRandomDegree);
       setRandomDegree(newRandomDegree);
       
       // For iOS compatibility, use simpler rotation
       const totalRotation = -(1800 + newRandomDegree);
+      console.log('Setting total rotation:', totalRotation);
       setIsSpinning(true);
       setFinalRotation(totalRotation);
       setSubmissionStatus('idle');
@@ -158,19 +171,26 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ onPrizeWon, userData }) => {
         try {
           setIsSpinning(false);
           const prize = calculatePrize(newRandomDegree);
+          console.log('Spin complete! Prize determined:', prize);
           onPrizeWon(prize);
-          submitToGoogleForm(prize);
+          // Form submission is now handled exclusively by WinningModal
         } catch (error) {
           console.error('Error in spin completion:', error);
           setSubmissionStatus('error');
-          setErrorMsg('Error determining prize. Please try again.');
+          toast.error("Error determining prize. Please try again.", {
+            duration: 5000,
+            className: "text-lg font-medium px-4 py-3"
+          });
         }
       }, 3100);
     } catch (error) {
       console.error('Error initiating spin:', error);
       setIsSpinning(false);
       setSubmissionStatus('error');
-      setErrorMsg('Failed to spin the wheel. Please try again.');
+      toast.error("Failed to spin the wheel. Please try again.", {
+        duration: 5000,
+        className: "text-lg font-medium px-4 py-3"
+      });
     }
   };
 

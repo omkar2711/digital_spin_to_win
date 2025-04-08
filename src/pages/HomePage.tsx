@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../contexts/UserContext';
+import { toast } from "sonner";
 
 interface FormData {
   fullName: string;
@@ -16,6 +17,7 @@ const HomePage = () => {
     contact: '',
     email: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -25,16 +27,143 @@ const HomePage = () => {
     }));
   };
 
-  const handleStartGame = (e: React.FormEvent) => {
+  const checkPhoneNumberExists = async (phone: string) => {
+    try {
+      console.log('Checking if phone number exists:', phone);
+      
+      // Normalize the phone number by removing non-digit characters
+      const normalizedPhone = phone.replace(/\D/g, '');
+      console.log('Normalized phone number:', normalizedPhone);
+      
+      if (!normalizedPhone || normalizedPhone.length < 8) {
+        console.error('Invalid phone number format');
+        throw new Error('Invalid phone number format');
+      }
+      
+      const apiUrl = `https://script.google.com/macros/s/AKfycbwILeMCeVtuLL2Acojc93bdmdUqs2LnEo3COBLIrlhc4ZlbJ5Fzxcm69C3qHJUz1PisRA/exec?phone=${encodeURIComponent(normalizedPhone)}`;
+      console.log('API URL:', apiUrl);
+      
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          'Accept': 'application/json',
+        },
+        cache: 'no-cache',
+        redirect: 'follow'
+      });
+      
+      if (!response.ok) {
+        console.error('Network error response:', response.status, response.statusText);
+        throw new Error('Network response was not ok');
+      }
+
+      const text = await response.text();
+      console.log('Raw response:', text);
+      
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        console.error('Failed to parse JSON:', e);
+        throw new Error('Failed to parse response');
+      }
+      
+      console.log('Phone check response data:', data);
+      
+      if (typeof data.exists !== 'boolean') {
+        console.error('Invalid response format, expected boolean "exists" property');
+        throw new Error('Invalid response format');
+      }
+      
+      return data.exists;
+    } catch (error) {
+      console.error('Error checking phone number:', error);
+      throw error;
+    }
+  };
+
+  const handleStartGame = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Store user data in context
-    setUserData({
-      name: formData.fullName,
-      email: formData.email,
-      phone: formData.contact
-    });
-    // Navigate to the game page
-    navigate('/game');
+
+    // Validate inputs
+    if (!formData.fullName.trim()) {
+      toast.error("Please enter your full name", {
+        duration: 5000,
+        className: "text-lg font-medium px-4 py-3"
+      });
+      return;
+    }
+
+    if (!formData.contact.trim()) {
+      toast.error("Please enter your contact number", {
+        duration: 5000,
+        className: "text-lg font-medium px-4 py-3"
+      });
+      return;
+    }
+    
+    // Validate phone number format
+    const phonePattern = /^[\d\s\+\-\(\)]{8,15}$/;
+    if (!phonePattern.test(formData.contact)) {
+      toast.error("Please enter a valid phone number", {
+        duration: 5000,
+        className: "text-lg font-medium px-4 py-3"
+      });
+      return;
+    }
+
+    if (!formData.email.trim()) {
+      toast.error("Please enter your email address", {
+        duration: 5000,
+        className: "text-lg font-medium px-4 py-3"
+      });
+      return;
+    }
+    
+    // Validate email format
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email)) {
+      toast.error("Please enter a valid email address", {
+        duration: 5000,
+        className: "text-lg font-medium px-4 py-3"
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Check if phone number already exists
+      const phoneExists = await checkPhoneNumberExists(formData.contact);
+      console.log('Phone exists check result:', phoneExists);
+      
+      if (phoneExists === true) {
+        toast.error("This phone number is already registered.\nEach number can be used only once.", {
+          duration: 5000,
+          className: "text-lg font-medium px-4 py-3"
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Store user data in context with normalized phone number
+      setUserData({
+        name: formData.fullName,
+        email: formData.email,
+        phone: formData.contact.replace(/\D/g, '') // Store normalized phone
+      });
+      
+      // Navigate to the game page
+      navigate('/game');
+    } catch (error) {
+      console.error('Error during validation:', error);
+      toast.error("Something went wrong while validating your information. Please try again later.", {
+        duration: 5000,
+        className: "text-lg font-medium px-4 py-3"
+      });
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -125,10 +254,10 @@ const HomePage = () => {
                     <span className="text-red-600 mr-3 mt-1">•</span>
                     <span className="group-hover:text-gray-900 transition-colors duration-200">Spin the wheel to win exciting prizes</span>
                   </li>
-                  <li className="flex items-start group">
+                  {/* <li className="flex items-start group">
                     <span className="text-red-600 mr-3 mt-1">•</span>
                     <span className="group-hover:text-gray-900 transition-colors duration-200">Each spin gives you a chance to win amazing rewards</span>
-                  </li>
+                  </li> */}
                 </ul>
               </div>
               
@@ -186,6 +315,7 @@ const HomePage = () => {
                     value={formData.fullName}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-red-100 focus:border-red-500"
+                    required
                   />
                   <input
                     type="tel"
@@ -194,6 +324,7 @@ const HomePage = () => {
                     value={formData.contact}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-red-100 focus:border-red-500"
+                    required
                   />
                   <input
                     type="email"
@@ -202,6 +333,7 @@ const HomePage = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-red-100 focus:border-red-500"
+                    required
                   />
                 </div>
                 <div className="flex justify-center">
@@ -209,8 +341,9 @@ const HomePage = () => {
                     <button
                       type="submit"
                       className="bg-red-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-red-700 transition-all"
+                      disabled={isSubmitting}
                     >
-                      Spin & Win Now
+                      {isSubmitting ? 'Please wait...' : 'Spin & Win Now'}
                     </button>
                   </div>
                 </div>
